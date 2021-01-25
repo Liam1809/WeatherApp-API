@@ -7,6 +7,7 @@ import {colors} from './utils/colors';
 import WeatherInfo from './components/WeatherInfo';
 import UnitsPicker from './components/UnitsPicker';
 import ReloadIcon from './components/ReloadIcon';
+import WeatherDetails from './components/WeatherDetails';
 
 
 const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather?';
@@ -63,10 +64,11 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="auto" />
           <View style={styles.main}>
-          <ReloadIcon load={load}/>
           <UnitsPicker unitsSystem={unitsSystem} setUnitsSystem={setUnitsSystem}/>
+          <ReloadIcon load={load}/>
           <WeatherInfo currentWeather={currentWeather}/>
           </View>
+          <WeatherDetails currentWeather={currentWeather} unitsSystem={unitsSystem}/>
       </View>
     );
   }

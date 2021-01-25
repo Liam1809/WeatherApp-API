@@ -10,13 +10,14 @@ export default function weatherInfo({currentWeather}) {
             name } = currentWeather;
 
     const {main, description, icon} = Details;
+    const temp_round = Math.floor(temp * 10)/10;
     const iconURL = `https://openweathermap.org/img/wn/${icon}@4x.png`;
     
     return (
         <View style={styles.WeatherInfo}>
             <Text>{name}</Text>
             <Image style={styles.WeatherIcon} source={{uri: iconURL}}/>
-            <Text style={styles.textPrimary}>{Math.floor(temp * 10)/10}°</Text>
+            <Text style={styles.textPrimary}>{temp_round}°</Text>
             <Text style={styles.WeatherDescription}>{description}</Text>
             <Text style={styles.textSecondary}>{main}</Text>
         </View>
