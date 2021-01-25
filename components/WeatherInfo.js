@@ -4,7 +4,7 @@ import {colors} from '../utils/colors'
 
 const {PRIMARY_COLOR, SECONDARY_COLOR} = colors;
 
-export default function weatherInfo({currentWeather, unitsSystem}) {
+export default function weatherInfo({currentWeather}) {
     const { main: {temp},
             weather: [Details],
             name } = currentWeather;
@@ -16,7 +16,7 @@ export default function weatherInfo({currentWeather, unitsSystem}) {
         <View style={styles.WeatherInfo}>
             <Text>{name}</Text>
             <Image style={styles.WeatherIcon} source={{uri: iconURL}}/>
-            <Text style={styles.textPrimary}>{temp}</Text>
+            <Text style={styles.textPrimary}>{Math.floor(temp * 10)/10}°</Text>
             <Text style={styles.WeatherDescription}>{description}</Text>
             <Text style={styles.textSecondary}>{main}</Text>
         </View>

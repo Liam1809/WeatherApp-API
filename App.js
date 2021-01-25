@@ -6,10 +6,11 @@ import {WEATHER_API_KEY} from '@env';
 import {colors} from './utils/colors';
 import WeatherInfo from './components/WeatherInfo';
 import UnitsPicker from './components/UnitsPicker';
+import ReloadIcon from './components/ReloadIcon';
 
 
 const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather?';
-const {PRIMARY_COLOR, SECONDARY_COLOR, BASE_COLOR} = colors;
+
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,6 +23,9 @@ export default function App() {
   }, [unitsSystem]);
 
   async function load () {
+    setCurrentWeather(null);
+    setErrorMessage(null);
+
     try {
       // get request permision
       let {status} = await Location.requestPermissionsAsync();
@@ -31,7 +35,7 @@ export default function App() {
         return;
       }
       // get current location
-      const location = await Location.getLastKnownPositionAsync();
+      const location = await Location.getCurrentPositionAsync();
       // get latitude and longitude of location
       const {latitude, longitude} = location.coords;
       // URL path
@@ -59,6 +63,7 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="auto" />
           <View style={styles.main}>
+          <ReloadIcon load={load}/>
           <UnitsPicker unitsSystem={unitsSystem} setUnitsSystem={setUnitsSystem}/>
           <WeatherInfo currentWeather={currentWeather}/>
           </View>
