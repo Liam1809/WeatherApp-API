@@ -1,18 +1,25 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
+import {WEATHER_API_KEY} from '@env';
+import {colors} from './utils/colors';
+import WeatherInfo from './components/WeatherInfo';
+import UnitsPicker from './components/UnitsPicker';
 
-const WEATHER_API_KEY = '9fad3d395e743404766133bf2ae85202';
+
 const WEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5/weather?';
+const {PRIMARY_COLOR, SECONDARY_COLOR, BASE_COLOR} = colors;
+
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
+  const [unitsSystem, setUnitsSystem] = useState('metric');
 
 
   useEffect(() => {
     load();
-  }, []);
+  }, [unitsSystem]);
 
   async function load () {
     try {
@@ -24,11 +31,11 @@ export default function App() {
         return;
       }
       // get current location
-      const location = await Location.getCurrentPositionAsync();
+      const location = await Location.getLastKnownPositionAsync();
       // get latitude and longitude of location
       const {latitude, longitude} = location.coords;
       // URL path
-      const WEATHER_URL = `${WEATHER_BASE_URL}lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
+      const WEATHER_URL = `${WEATHER_BASE_URL}lat=${latitude}&lon=${longitude}&units=${unitsSystem}&appid=${WEATHER_API_KEY}`;
       // request API call
       const response = await fetch(WEATHER_URL);
       // transform API response to json
@@ -43,20 +50,22 @@ export default function App() {
 
       // alert(`latitude:${latitude}, longitude:${longitude}`);
     } catch (error) {
-      
+      setErrorMessage(error.message);
     }
   }
 
   if(currentWeather) {
-    const {main: {temp}} = currentWeather;
     return (
       <View style={styles.container}>
-        <Text>{temp}</Text>
         <StatusBar style="auto" />
+          <View style={styles.main}>
+          <UnitsPicker unitsSystem={unitsSystem} setUnitsSystem={setUnitsSystem}/>
+          <WeatherInfo currentWeather={currentWeather}/>
+          </View>
       </View>
     );
   }
-  else {
+  else if(errorMessage){
     return (
       <View style={styles.container}>
         <Text>{errorMessage}</Text>
@@ -64,16 +73,23 @@ export default function App() {
       </View>
     );
   }
-
-
-  
+  else {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size='large' color={colors.PRIMARY_COLOR}/>
+        <StatusBar style="auto" />
+      </View>
+    ); 
+  } 
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
+  main: {
+    flex: 1,
+    justifyContent: 'center'
+  }
 });
